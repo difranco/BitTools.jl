@@ -8,7 +8,7 @@ using Distributions
 
 rng = Xorshifts.Xoshiro128Plus(0xdeadbeef)
 
-@inline function rbitvec(len, occ)
+@inline function rbitvec(len :: Integer, occ :: Integer, rng = rng)
     # Returns a random bit vector of length len
     # with occ one bits and len-occ zero bits
     return BitVector(shuffle!(rng, [zeros(Bool, len - occ); ones(Bool, occ)]))
@@ -17,7 +17,7 @@ end
 using Distributions: Beta
 beta = Beta(5, 5)
 
-@inline function rbitvec(len)
+@inline function rbitvec(len :: Integer)
     # Returns a random bit vector of length len
     # and occupancy Beta(5,5) between 1 and len
     return rbitvec(len, Int(floor(len * rand(rng, beta)) + 1))
@@ -125,6 +125,36 @@ function sampleBernoulli(p :: AbstractMatrix, numSamples = 1)
         end
     end
     return out
+end
+
+export hypercode, hypersum, hyperdiff, hyperprod, hyperquot, distance
+
+function hypercode(o, setbits = 16, length = 4096)
+    localrng = Xorshifts.Xorshift64(hash(o))
+    return rbitvec(length, setbits, localrng)
+end
+
+@inline function hypersum(a, b)
+    # this will only perform as expected for sparse codes, up to capacity
+    return a .⊻ b
+end
+
+@inline function hyperdiff(a, b)
+    return a .& .!b
+end
+
+@inline function hyperprod(a, b)
+    # permutation version is better for many uses
+    return a .⊻ b
+end
+
+@inline function hyperquot(a, b)
+    # permutation version is better for many uses
+    return a .⊻ b
+end
+
+@inline function distance(a, b)
+    return sum(a .⊻ b)
 end
 
 end # module

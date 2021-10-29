@@ -25,3 +25,10 @@ end
     answer = sum(sample(c, 10000, 100000), dims = 2) ./ 100000
     @test sum(weights .- answer .|> abs) < 1e4
 end
+
+@testset "hypercodes" begin
+    object = 42
+    code = hypercode(object)
+    @test length(code) == 4096
+    @test sum(code) == 16
+end
