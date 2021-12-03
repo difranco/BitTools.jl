@@ -1,7 +1,7 @@
 name = "BitTools"
 uuid = "241b95ae-9817-4b36-a40a-0f608189f837"
 authors = ["acd "]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
